@@ -1,55 +1,25 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
+import firebase from "firebase/app"
+import db from "./firebase";
 
 export default function App() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Message 1",
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: "Guido",
-          avatar: "https://git-readme-images.s3.amazonaws.com/image1.png",
-        },
-      },
-      {
-        _id: 2,
-        text: "Message 2",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native Bot",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-      {
-        _id: 3,
-        text: "Message 3",
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: "Guido Asbun",
-          avatar: "https://git-readme-images.s3.amazonaws.com/image1.png",
-        },
-      },
-      {
-        _id: 4,
-        text: "Message 4",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native Bot",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
+    db.collection("Chats")
+      .doc("mysecondchat")
+      .get()
+      .then((snapshot) => {
+        setMessages(snapshot.data().messages);
+
+        console.log(snapshot.id);
+        console.log(snapshot.data());
+      });
   }, []);
 
   const onSend = useCallback((messages = []) => {
+    db.collection("Chats").doc("mysecondchat").update({ messages: firebase.firestore.FieldValue.arrayUnion(messages[0]) });
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
