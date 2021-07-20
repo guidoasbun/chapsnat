@@ -13,6 +13,8 @@ const colors = {
   noticeText: "#fff",
   background: "#1F0808",
   clear: "rgba(0,0,0,0)",
+  snapyellow: '#fffc00',
+  snapblue: "#2f95dc",
 };
 
 export default colors;

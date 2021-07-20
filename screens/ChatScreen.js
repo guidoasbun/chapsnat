@@ -13,7 +13,12 @@ export default function ChatScreen({ route }) {
       .doc(chatname)
       .onSnapshot((snapshot) => {
         console.log("New Snapshot!");
-        setMessages(snapshot.data().messages);
+        let newMessages = snapshot.data().messages.map((singleMessage) => {
+          singleMessage.createdAt = singleMessage.createdAt.seconds * 1000;
+          return singleMessage;
+        });
+
+        setMessages(newMessages);
       });
 
     return function cleanupBeforeUnmounting() {

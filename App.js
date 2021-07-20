@@ -12,16 +12,35 @@ import firebase from "@firebase/app";
 const Stack = createStackNavigator();
 
 function App() {
+  const [isSignedIn, setIsSignedIn] = useState(
+    firebase.auth().currentUser ? true : false
+  );
+
+  useEffect(() => {
+    return firebase.auth().onAuthStateChanged((user) => {
+      setIsSignedIn(user ? true : false);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Tabs">
-          <>
-            <Stack.Screen name="Tabs" component={BottomTabNavigator} />
-            <Stack.Screen name="Chat" component={ChatScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Signup" component={SignupScreen} />
-          </>
+          {isSignedIn ? (
+            <>
+              <Stack.Screen name="Tabs" component={BottomTabNavigator} />
+              <Stack.Screen name="Chat" component={ChatScreen} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen name="Signup" component={SignupScreen} />
+            </>
+          )}
         </Stack.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>
