@@ -3,13 +3,14 @@ import { GiftedChat } from "react-native-gifted-chat";
 import db from "../firebase";
 import firebase from "firebase/app";
 
-export default function ChatScreen({ route, navigation }) {
+export default function ChatScreen({ route }) {
   const [messages, setMessages] = useState([]);
+  const { chatname } = route.params;
 
   useEffect(() => {
     let unsubscribeFromNewSnapshots = db
       .collection("Chats")
-      .doc(route.params.chat)
+      .doc(chatname)
       .onSnapshot((snapshot) => {
         console.log("New Snapshot!");
         setMessages(snapshot.data().messages);
@@ -22,7 +23,7 @@ export default function ChatScreen({ route, navigation }) {
 
   const onSend = useCallback((messages = []) => {
     db.collection("Chats")
-      .doc(route.params.chat)
+      .doc(chatname)
       .update({
         // arrayUnion appends the message to the existing array
         messages: firebase.firestore.FieldValue.arrayUnion(messages[0]),
@@ -39,10 +40,10 @@ export default function ChatScreen({ route, navigation }) {
       user={{
         // current "blue bubble" user
         _id: "1",
-        name: "Ashwin",
+        name: "Guido",
         avatar: "https://git-readme-images.s3.amazonaws.com/image1.png",
       }}
-      inverted={true}
+      inverted={false}
       showUserAvatar={true}
       renderUsernameOnMessage={true}
     />
