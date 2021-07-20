@@ -1,44 +1,33 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
-import firebase from "firebase/app"
-import db from "./firebase";
+import React from "react";
+import { StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import ChatScreen from "./screens/ChatScreen";
+import HomeScreen from "./screens/HomeScreen";
 
-export default function App() {
-  const [messages, setMessages] = useState([]);
+const Stack = createStackNavigator();
 
-  useEffect(() => {
-    db.collection("Chats")
-      .doc("mysecondchat")
-      .get()
-      .then((snapshot) => {
-        setMessages(snapshot.data().messages);
-
-        console.log(snapshot.id);
-        console.log(snapshot.data());
-      });
-  }, []);
-
-  const onSend = useCallback((messages = []) => {
-    db.collection("Chats").doc("mysecondchat").update({ messages: firebase.firestore.FieldValue.arrayUnion(messages[0]) });
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
-
+function App() {
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={(messages) => onSend(messages)}
-      user={{
-        _id: 1,
-        name: "Guido",
-        avatar: "https://git-readme-images.s3.amazonaws.com/image1.png",
-      }}
-      placeholder={"Enter Your Mesage Here"}
-      inverted={true}
-      showUserAvatar={true}
-      alwaysShowSend={true}
-      renderUsernameOnMessage={true}
-    />
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+});
+
+export default App;
