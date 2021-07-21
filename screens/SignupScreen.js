@@ -16,25 +16,24 @@ export default function SignupScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const onPressCreate = async () => {
-    const user = {
-      name: name,
-      email: email,
-      password: password,
-    };
 
+  const onPressCreate = async () => {
     await firebase
       .auth()
-      .createUserWithEmailAndPassword(user.email, user.password)
+      .createUserWithEmailAndPassword(email, password)
       .then(onSuccess, onFailure);
   };
 
-  const onSuccess = async () => {
-    //Signed in
-    alert("Account created! Please log in.");
+  const onSuccess = (userCredential) => {
+    console.log("SUCCESS");
+    var curr_user = userCredential.user;
+    curr_user.updateProfile({
+      displayName: name,
+    });
   };
 
-  const onFailure = async () => {
+
+  const onFailure = () => {
     alert("Failure! Please try again.");
   };
 
@@ -54,7 +53,11 @@ export default function SignupScreen({ navigation }) {
         secureTextEntry={true}
       />
       <Text style={styles.title}>Name:</Text>
-      <TextInput style={styles.nameInput} onChangeText={setName} placeholder="Name"/>
+      <TextInput
+        style={styles.nameInput}
+        onChangeText={setName}
+        placeholder="Name"
+      />
 
       <Button
         onPress={onPressCreate}
