@@ -11,12 +11,8 @@ import CustomMultiPicker from "react-native-multiple-select-list";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import Colors from "../constants/Colors";
-
-const userListDemo = {
-  123: "Jenny",
-  124: "Ashwin",
-  125: "Pavan",
-};
+import db from "../firebase";
+import firebase from "firebase/app";
 
 export default function FriendsScreen() {
   const [chatName, setChatName] = useState("");
@@ -25,6 +21,14 @@ export default function FriendsScreen() {
 
   useEffect(() => {
     // download user list from Firebase
+    fetch("https://us-central1-chapsnat-3f4f7.cloudfunctions.net/getAllUsers")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        delete data[firebase.auth().currentUser.uid]
+        setUserList(data);
+      });
   }, []);
 
   const onPressCreateChat = () => {
@@ -36,7 +40,7 @@ export default function FriendsScreen() {
     <View>
       <View style={styles.friendListContainer}>
         <CustomMultiPicker
-          options={userListDemo}
+          options={userList}
           search={true} // should show search bar?
           multiple={true} // allow multiple select
           placeholder={"Search"}
@@ -56,7 +60,7 @@ export default function FriendsScreen() {
           iconSize={30}
           selectedIconName={"ios-checkmark-circle-outline"}
           unselectedIconName={"ios-radio-button-off-outline"}
-          scrollViewHeight={300}
+          scrollViewHeight={450}
         />
       </View>
       <KeyboardAvoidingView behavior="position">
