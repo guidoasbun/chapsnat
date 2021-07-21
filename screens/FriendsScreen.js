@@ -14,7 +14,7 @@ import Colors from "../constants/Colors";
 import db from "../firebase";
 import firebase from "firebase/app";
 
-export default function FriendsScreen() {
+export default function FriendsScreen({ navigation }) {
   const [chatName, setChatName] = useState("");
   const [userList, setUserList] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -26,14 +26,41 @@ export default function FriendsScreen() {
         return response.json();
       })
       .then((data) => {
-        delete data[firebase.auth().currentUser.uid]
+        delete data[firebase.auth().currentUser.uid];
         setUserList(data);
       });
   }, []);
 
   const onPressCreateChat = () => {
     console.log("Create Chat button pressed!");
+    console.log(selectedUsers);
+    console.log(chatName);
     // Create new chat in Firebase
+    let chatsRef = db.collection("Chats");
+    chatsRef
+      .doc(chatName)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          alert("Chat with this name already exists!");
+        } else {
+          chatsRef
+            .doc(chatName)
+            .set({
+              messages: [],
+              users: [...selectedUsers, firebase.auth().currentUser.uid],
+            })
+            .then(() => {
+              console.log("Chat successfully created!");
+              setSelectedUsers([]);
+              setChatName("");
+              navigation.navigate("Home");
+            })
+            .catch((error) => {
+              console.error("Error creating chat: ", error);
+            });
+        }
+      });
   };
 
   return (
