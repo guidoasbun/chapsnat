@@ -121,6 +121,7 @@ export default function ProfileScreen() {
         photoURL: downloadURL,
       });
     } catch (e) {
+      alert("There was an error uploading your avatar");
       console.error(e);
     }
   };

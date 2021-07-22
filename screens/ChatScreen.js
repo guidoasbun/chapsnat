@@ -4,6 +4,8 @@ import db from "../firebase";
 import firebase from "@firebase/app";
 
 export default function ChatScreen({ route }) {
+  var user = firebase.auth().currentUser;
+  
   const [messages, setMessages] = useState([]);
   const { chatname } = route.params;
 
@@ -44,9 +46,9 @@ export default function ChatScreen({ route }) {
       onSend={(messages) => onSend(messages)}
       user={{
         // current "blue bubble" user
-        _id: firebase.auth().currentUser.uid,
-        name: firebase.auth().currentUser.displayName,
-        avatar: firebase.auth().currentUser.photoURL,
+        _id: user.uid,
+        name: user.displayName,
+        avatar: user.photoURL,
       }}
       inverted={false}
       showUserAvatar={true}
